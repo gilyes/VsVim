@@ -44,7 +44,7 @@ namespace Vim.VisualStudio.Implementation.ReSharper
             }
         }
 
-        internal const string ResharperTaggerProviderName = "VsDocumentMarkupTaggerProvider";
+        internal const string ResharperTaggerProviderName = "VsGlyphMarginTaggerProvider";
         internal static readonly Guid LiveTemplateKey = new Guid("A6FD6EDE-B430-46C3-9991-DA077ECF5C0B");
 
         private readonly IReSharperUtil _reSharperUtil;
