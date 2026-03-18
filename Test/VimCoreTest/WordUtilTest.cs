@@ -37,12 +37,12 @@ namespace Vim.UnitTest
                 var textWordsForward = GetWordsInText(wordKind, SearchPath.Forward, text);
                 Assert.Equal(expected, textWordsForward);
                 var textWordsBackward = GetWordsInText(wordKind, SearchPath.Forward, text).Reverse();
-                Assert.Equal(expected.Reverse(), textWordsBackward);
+                Assert.Equal(expected.AsEnumerable().Reverse(), textWordsBackward);
                 _textBuffer.SetTextContent(text);
                 var bufferWordsForward = _wordUtil.GetWordSpans(wordKind, SearchPath.Forward, _textBuffer.GetStartPoint()).Select(x => x.GetText());
                 Assert.Equal(expected, bufferWordsForward);
                 var bufferWordsBackward = _wordUtil.GetWordSpans(wordKind, SearchPath.Backward, _textBuffer.GetEndPoint()).Select(x => x.GetText());
-                Assert.Equal(expected.Reverse(), bufferWordsBackward);
+                Assert.Equal(expected.AsEnumerable().Reverse(), bufferWordsBackward);
             }
 
             [WpfTheory]
