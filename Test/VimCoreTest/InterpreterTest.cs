@@ -521,6 +521,7 @@ namespace Vim.UnitTest
                 var newLine = Environment.NewLine;
                 var reversedLines = input
                     .Split(new[] { newLine }, StringSplitOptions.None)
+                    .AsEnumerable()
                     .Reverse()
                     .Skip(1);
                 var output = String.Join(newLine, reversedLines) + newLine;
