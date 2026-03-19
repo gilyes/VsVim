@@ -122,6 +122,7 @@ function Get-PackagesDir() {
 function Get-MSBuildPath() {
   $vsWhere = Join-Path $toolsDir "vswhere.exe"
   $vsInfo = Exec-Command $vsWhere "-latest -format json -requires Microsoft.Component.MSBuild" | Out-String | ConvertFrom-Json
+  $vsInfo = Exec-Command $vsWhere "-version [17.0,18.0) -format json -requires Microsoft.Component.MSBuild" | Out-String | ConvertFrom-Json
 
   # use first matching instance
   $vsInfo = $vsInfo[0]
