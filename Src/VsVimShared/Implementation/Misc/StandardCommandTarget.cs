@@ -114,6 +114,17 @@ namespace Vim.VisualStudio.Implementation.Misc
                 return keyInput.IsArrowKey;
             }
 
+            // Consider external completion windows (e.g. Redgate SQL Prompt)
+            if (Extensions.IsExternalCompletionWindowActive())
+            {
+                return
+                    keyInput.IsArrowKey ||
+                    keyInput == KeyInputUtil.EnterKey ||
+                    keyInput == KeyInputUtil.TabKey ||
+                    keyInput.Key == VimKey.Back ||
+                    keyInput.Key == VimKey.Escape;
+            }
+
             return false;
         }
 

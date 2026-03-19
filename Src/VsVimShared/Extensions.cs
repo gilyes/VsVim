@@ -765,8 +765,49 @@ namespace Vim.VisualStudio
             return
                 displayWindowBroker.IsCompletionActive ||
                 displayWindowBroker.IsQuickInfoActive ||
-                displayWindowBroker.IsSignatureHelpActive;
+                displayWindowBroker.IsSignatureHelpActive ||
+                IsExternalCompletionWindowActive();
         }
+
+        /// <summary>
+        /// Checks if an external completion window that is not using ICompletionBroker (e.g. Redgate SQL Prompt) is visible.
+        /// </summary>
+        internal static bool IsExternalCompletionWindowActive()
+        {
+            // SQL Prompt uses WinForms for its completion window instead of the standard ICompletionBroker.
+            // NOTE: This is not needed in Visual Studio where SQL Prompt intercepts arrow keys before
+            // they reach VsVim's IOleCommandTarget. In SSMS 21+ the keys do reach VsVim first.
+            var found = false;
+            EnumThreadWindows(GetCurrentThreadId(), (hWnd, lParam) =>
+            {
+                if (IsWindowVisible(hWnd))
+                {
+                    var sb = new System.Text.StringBuilder(256);
+                    GetWindowText(hWnd, sb, sb.Capacity);
+                    if (sb.ToString() == "CandidateList")
+                    {
+                        found = true;
+                        return false;
+                    }
+                }
+                return true;
+            }, System.IntPtr.Zero);
+            return found;
+        }
+
+        private delegate bool EnumThreadWndProc(System.IntPtr hWnd, System.IntPtr lParam);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool EnumThreadWindows(uint threadId, EnumThreadWndProc callback, System.IntPtr lParam);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern uint GetCurrentThreadId();
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(System.IntPtr hWnd);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+        private static extern int GetWindowText(System.IntPtr hWnd, System.Text.StringBuilder lpString, int nMaxCount);
 
         #endregion
 
